@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching Strategy Recommendation App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Teaching Strategy Recommendation App</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+    </header>
+    <div class="container" id="app">
+         <!-- Login Page -->
+         <div id="login-page">
+            <h2>Login</h2>
+            <input type="text" id="login-username" placeholder="Username">
+            <input type="password" id="login-password" placeholder="Password">
+            <button onclick="login()">Login</button>
+            <p>Don't have an account? <button onclick="goToSignUpPage()">Sign Up</button></p>
+        </div>
+
+        <!-- Sign-Up Page -->
+        <div id="signup-page" class="hidden">
+            <h2>Sign Up</h2>
+            <input type="text" id="signup-username" placeholder="Username">
+            <input type="password" id="signup-password" placeholder="Password">
+            <button onclick="signUp()">Sign Up</button>
+            <p>Already have an account? <button onclick="goToLoginPage()">Login</button></p>
+        </div>
+
+        <!-- Teaching Details Page -->
+        <div id="page1" class="hidden">
+            <h2>Enter Teaching Details</h2>
+            <input type="text" id="teacher-name" placeholder="Teacher's Name">
+            <input type="text" id="field-of-study" placeholder="Field of Study">
+            <input type="number" id="years-of-experience" placeholder="Years of Teaching Experience">
+            <input type="text" id="teaching-style" placeholder="Teaching Style">
+            <select id="comfort-with-technology">
+                <option value="" disabled selected>Comfortable with Technology?</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select>
+            <button onclick="goToPage2()">Next</button>
+        </div>
+
+        <!-- Class Size and Course Details Page -->
+        <div id="page2" class="hidden">
+            <h2>Enter Class Size and Course Details</h2>
+            <select id="course-type">
+                <option value="" disabled selected>Course Type</option>
+                <option value="Lecture">Lecture</option>
+                <option value="Lab">Lab</option>
+                <option value="Seminar">Seminar</option>
+            </select>
+            <input type="number" id="grade-level" placeholder="Grade Level (1: Undergraduate, 2: Postgraduate)">
+            <input type="number" id="class-size" placeholder="Class Size">
+            <button onclick="showRecommendedStrategies()">Submit</button>
+            <button onclick="goToPage1()">Back</button>
+        </div>
+
+        <!-- Recommended Strategies Page -->
+        <div id="strategies-page" class="hidden">
+            <h2>Recommended Teaching Strategies</h2>
+            <div id="strategies-result"></div>
+            <button onclick="goToPage1()">Back to Teaching Details</button>
+        </div>
+    </div>
+
+    <script>
+        // User database simulation
+        const users = {};
+
+        // Login page navigation
+        function goToLoginPage() {
+            document.getElementById('login-page').classList.remove('hidden');
+            document.getElementById('signup-page').classList.add('hidden');
+        }
+
+        // Sign-up page navigation
+        function goToSignUpPage() {
+            document.getElementById('signup-page').classList.remove('hidden');
+            document.getElementById('login-page').classList.add('hidden');
+        }
+
+        // Sign up function
+        function signUp() {
+            const username = document.getElementById('signup-username').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
+
+            if (!username || !password) {
+                alert('Please fill in both username and password.');
+                return;
+            }
+
+            if (users[username]) {
+                alert('Username already exists. Please choose a different one.');
+                return;
+            }
+
+            users[username] = password;
+            alert('Sign-up successful! You can now log in.');
+            goToLoginPage();
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            if (!username || !password) {
+                alert('Please fill in both username and password.');
+                return;
+            }
+
+            if (users[username] === password) {
+                alert(`Login successful! Welcome, ${username}!`);
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('page1').classList.remove('hidden');
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        }
+
+        // Teaching details page navigation
+        const teacherData = {};
+
+        function goToPage1() {
+            document.getElementById('page1').classList.remove('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('strategies-page').classList.add('hidden');
+        }
+
+        function goToPage2() {
+            const name = document.getElementById('teacher-name').value;
+            const fieldOfStudy = document.getElementById('field-of-study').value;
+            const yearsOfExperience = document.getElementById('years-of-experience').value;
+            const teachingStyle = document.getElementById('teaching-style').value;
+            const comfortWithTechnology = document.getElementById('comfort-with-technology').value;
+
+            if (!name || !fieldOfStudy || !yearsOfExperience || !teachingStyle || !comfortWithTechnology) {
+                alert("Please fill out all fields before proceeding.");
+                return;
+            }
+
+            teacherData.name = name;
+            teacherData.fieldOfStudy = fieldOfStudy;
+            teacherData.yearsOfExperience = parseInt(yearsOfExperience);
+            teacherData.teachingStyle = teachingStyle;
+            teacherData.comfortWithTechnology = comfortWithTechnology === 'true';
+
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.remove('hidden');
+        }
+
+        function showRecommendedStrategies() {
+            const courseType = document.getElementById('course-type').value;
+            const gradeLevel = parseInt(document.getElementById('grade-level').value);
+            const classSize = parseInt(document.getElementById('class-size').value);
+
+            if (!courseType || !gradeLevel || !classSize) {
+                alert("Please fill out all fields before submitting.");
+                return;
+            }
+
+            const strategies = [];
+            const descriptions = {
+                'Interactive Lectures': 'Ask questions to the class regularly to keep students engaged.',
+                'Peer Instruction': 'Encourages learning through student discussions.',
+                'Hands-On Activities': 'Engage students with equipment, tools, or materials in the lab.',
+                'Problem-Based Learning': 'Solve real-world problems using skills and knowledge.',
+                'Debates': 'Organize structured debates with different perspectives.',
+                'Group Discussions': 'Break into groups to discuss a central topic.',
+                'Gamification': 'Use quizzes, challenges, and rewards to enhance learning.',
+                'Lecture-Based Teaching with Interactive Q&A': 'Combine lectures with interactive Q&A sessions.'
+            };
+
+            if (courseType === 'Lecture') {
+                strategies.push('Interactive Lectures', 'Peer Instruction');
+            } else if (courseType === 'Lab') {
+                strategies.push('Hands-On Activities', 'Problem-Based Learning');
+            } else if (courseType === 'Seminar') {
+                strategies.push('Debates', 'Group Discussions');
+            }
+
+            if (teacherData.comfortWithTechnology) {
+                strategies.push('Gamification');
+            }
+
+            if (teacherData.yearsOfExperience > 10 && classSize > 30) {
+                strategies.push('Lecture-Based Teaching with Interactive Q&A');
+            }
+
+            let result = '<h3>Recommended Strategies:</h3>';
+            strategies.forEach(strategy => {
+                result += `<p><strong>${strategy}:</strong> ${descriptions[strategy]}</p>`;
+            });
+
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('strategies-page').classList.remove('hidden');
+            document.getElementById('strategies-result').innerHTML = result;
+        }
+    </script>
+</body>
+</html>
